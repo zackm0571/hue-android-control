@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -28,11 +32,17 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
+    TextView currentDb;
+    CheckBox light1, light2, light3;
+    EditText editDecibalThreshold, editTimeout;
+    Button applySettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        editDecibalThreshold = (EditText)findViewById(R.id.editDbThreshold);
+        editTimeout = (EditText)findViewById(R.id.editTimeout);
         if(shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)){
 
         }
@@ -57,6 +67,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-
+        HueManager.instance().dbThreshold = Double.parseDouble(editDecibalThreshold.getText().toString());
+        HueManager.instance().soundTimeout = Long.parseLong(editTimeout.getText().toString()) * 1000;
+        Toast.makeText(this, "Settings applied", Toast.LENGTH_SHORT).show();
     }
 }

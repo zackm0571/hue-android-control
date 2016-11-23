@@ -22,11 +22,20 @@ public class SoundDetectionService extends Service {
                 while(true){
                     double db = soundMeter.getAmplitude();
                     Log.d("Debug", String.valueOf(db) + "db");
-                    if(db > 1000){
+                    if(db > HueManager.instance().dbThreshold){
                         HueManager.instance().turnOnLight(SoundDetectionService.this, 1);
+                        HueManager.instance().turnOnLight(SoundDetectionService.this, 2);
+                        HueManager.instance().turnOnLight(SoundDetectionService.this, 3);
+                        try {
+                            Thread.sleep(HueManager.instance().soundTimeout);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                     else{
                         HueManager.instance().turnOffLight(SoundDetectionService.this, 1);
+                        HueManager.instance().turnOffLight(SoundDetectionService.this, 2);
+                        HueManager.instance().turnOffLight(SoundDetectionService.this, 3);
                     }
 
                 }

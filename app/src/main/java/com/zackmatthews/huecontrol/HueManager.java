@@ -17,10 +17,12 @@ import org.json.JSONObject;
  */
 public class HueManager {
     //Todo: Create settings page, make requests more dynamic <Proof of concept>
-    String BASE_API = "http://192.168.1.151/api";
-    String USER = "8LKcg4w717ugIGKYQKyWOkAX9bS0L254d-DPE1Ik";
-    RequestQueue queue;
+    private String BASE_API = "http://192.168.1.151/api";
+    private String USER = "8LKcg4w717ugIGKYQKyWOkAX9bS0L254d-DPE1Ik";
+    private RequestQueue queue;
     private static HueManager instance;
+    public double dbThreshold = 1000;
+    public long soundTimeout = 10000;
     public static HueManager instance(){
         if(instance == null) {
             instance = new HueManager();
@@ -48,7 +50,7 @@ public class HueManager {
                 BASE_API + "/" + USER + "/lights/" + LIGHT_NUM + "/state", object, null, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, error.getMessage().toString(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -67,7 +69,7 @@ public class HueManager {
                 BASE_API + "/" + USER + "/lights/" + LIGHT_NUM + "/state", object, null, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, error.getMessage().toString(), Toast.LENGTH_LONG).show();
             }
         });
 
