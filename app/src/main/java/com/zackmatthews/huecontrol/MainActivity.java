@@ -13,24 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-
-
-import javax.net.ssl.HttpsURLConnection;
-
-public class MainActivity extends Activity implements View.OnClickListener{
+public class MainActivity extends Activity implements View.OnClickListener, SoundMeter.SoundPolledListener{
 
     TextView currentDb;
     CheckBox light1, light2, light3;
@@ -43,6 +26,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_main);
         editDecibalThreshold = (EditText)findViewById(R.id.editDbThreshold);
         editTimeout = (EditText)findViewById(R.id.editTimeout);
+        currentDb = (TextView)findViewById(R.id.dbLevel);
         if(shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)){
 
         }
@@ -59,8 +43,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         if(requestCode == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                SoundMeter.instance().setListener(this);
                 Intent intent = new Intent(this, SoundDetectionService.class);
                 startService(intent);
+
             }
         }
     }
@@ -70,5 +56,16 @@ public class MainActivity extends Activity implements View.OnClickListener{
         HueManager.instance().dbThreshold = Double.parseDouble(editDecibalThreshold.getText().toString());
         HueManager.instance().soundTimeout = Long.parseLong(editTimeout.getText().toString()) * 1000;
         Toast.makeText(this, "Settings applied", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSoundPolled(final double soundDb) {
+        currentDb.post(new Runnable() {
+            @Override
+            public void run() {
+                currentDb.setText("db level :" + String.valueOf(soundDb) + "db");
+            }
+        });
+
     }
 }

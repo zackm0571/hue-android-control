@@ -6,21 +6,20 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class SoundDetectionService extends Service {
-    private SoundMeter soundMeter;
+
     public SoundDetectionService() {
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        soundMeter = new SoundMeter();
-        soundMeter.start();
+        SoundMeter.instance().start();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while(true){
-                    double db = soundMeter.getAmplitude();
+                    double db = SoundMeter.instance().getAmplitude();
                     Log.d("Debug", String.valueOf(db) + "db");
                     if(db > HueManager.instance().dbThreshold){
                         HueManager.instance().turnOnLight(SoundDetectionService.this, 1);
@@ -36,6 +35,12 @@ public class SoundDetectionService extends Service {
                         HueManager.instance().turnOffLight(SoundDetectionService.this, 1);
                         HueManager.instance().turnOffLight(SoundDetectionService.this, 2);
                         HueManager.instance().turnOffLight(SoundDetectionService.this, 3);
+
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                 }
@@ -57,7 +62,7 @@ public class SoundDetectionService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        soundMeter.stop();
+        SoundMeter.instance().stop();
 
     }
 
