@@ -10,6 +10,7 @@ public class SoundDetectionService extends Service {
     public SoundDetectionService() {
     }
 
+    private boolean shouldContinue = true;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -18,31 +19,19 @@ public class SoundDetectionService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while(shouldContinue){
                     double db = SoundMeter.instance().getAmplitude();
                     Log.d("Debug", String.valueOf(db) + "db");
-                    if(db > HueManager.instance().dbThreshold){
-                        HueManager.instance().turnOnLight(SoundDetectionService.this, 1);
-                        HueManager.instance().turnOnLight(SoundDetectionService.this, 2);
-                        HueManager.instance().turnOnLight(SoundDetectionService.this, 3);
-                        try {
-                            Thread.sleep(HueManager.instance().soundTimeout);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    boolean isLit = db > HueManager.instance().dbThreshold;
+                    long sleep = (isLit) ? HueManager.instance().soundTimeout : 100;
+                    HueManager.instance().toggleLight(SoundDetectionService.this, 1, isLit);
+                    HueManager.instance().toggleLight(SoundDetectionService.this, 2, isLit);
+                    HueManager.instance().toggleLight(SoundDetectionService.this, 3, isLit);
+                    try {
+                        Thread.sleep(sleep);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    else{
-                        HueManager.instance().turnOffLight(SoundDetectionService.this, 1);
-                        HueManager.instance().turnOffLight(SoundDetectionService.this, 2);
-                        HueManager.instance().turnOffLight(SoundDetectionService.this, 3);
-
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
                 }
             }
         }).start();
@@ -56,12 +45,14 @@ public class SoundDetectionService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
+        shouldContinue = false;
         stopSelf();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        shouldContinue = false;
         SoundMeter.instance().stop();
 
     }

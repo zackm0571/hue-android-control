@@ -19,6 +19,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
     CheckBox light1, light2, light3;
     EditText editDecibalThreshold, editTimeout;
     Button applySettings;
+    Intent soundServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +45,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
         if(requestCode == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 SoundMeter.instance().setListener(this);
-                Intent intent = new Intent(this, SoundDetectionService.class);
-                startService(intent);
+                soundServiceIntent = new Intent(this, SoundDetectionService.class);
+                startService(soundServiceIntent);
 
             }
         }
@@ -53,9 +54,28 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
 
     @Override
     public void onClick(View v) {
-        HueManager.instance().dbThreshold = Double.parseDouble(editDecibalThreshold.getText().toString());
-        HueManager.instance().soundTimeout = Long.parseLong(editTimeout.getText().toString()) * 1000;
-        Toast.makeText(this, "Settings applied", Toast.LENGTH_SHORT).show();
+        if(v.getId() == R.id.confirmSettings) {
+            HueManager.instance().dbThreshold = Double.parseDouble(editDecibalThreshold.getText().toString());
+            HueManager.instance().soundTimeout = Long.parseLong(editTimeout.getText().toString()) * 1000;
+            Toast.makeText(this, "Settings applied", Toast.LENGTH_SHORT).show();
+
+            stopService(soundServiceIntent);
+            startService(soundServiceIntent);
+        }
+        else if(v.getId() == R.id.manualToggle){
+            String lightsOff = getString(R.string.all_lights_off);
+            String lightsOn = getString(R.string.all_lights_on);
+
+            boolean isSetToOn = ((Button)v).getText().equals(lightsOn);
+
+            ((Button)v).setText((isSetToOn) ? lightsOff : lightsOn);
+
+            for(int i = 1; i <= HueManager.LIGHT_COUNT; i++) {
+                HueManager.instance().toggleLight(this, i, isSetToOn);
+            }
+            stopService(soundServiceIntent);
+            Toast.makeText(this, "Stopping sound service, apply settings to restart", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

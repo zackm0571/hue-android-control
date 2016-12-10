@@ -17,6 +17,7 @@ import org.json.JSONObject;
  */
 public class HueManager {
     //Todo: Create settings page, make requests more dynamic <Proof of concept>
+    public static final int LIGHT_COUNT = 3; //todo: discover via api request
     private String BASE_API = "http://192.168.1.151/api";
     private String USER = "8LKcg4w717ugIGKYQKyWOkAX9bS0L254d-DPE1Ik";
     private RequestQueue queue;
@@ -38,30 +39,11 @@ public class HueManager {
         return queue;
     }
 
-    public void turnOffLight(final Context context, int lightNum){
+    public void toggleLight(final Context context, int lightNum, boolean isLit){
         String LIGHT_NUM= String.valueOf(lightNum);
         JSONObject object = null;
         try {
-            object = new JSONObject("{\"on\":false}");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.Method.PUT,
-                BASE_API + "/" + USER + "/lights/" + LIGHT_NUM + "/state", object, null, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Toast.makeText(context, error.getMessage().toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        getQueue(context).add(request);
-    }
-
-    public void turnOnLight(final Context context, int lightNum){
-        String LIGHT_NUM= String.valueOf(lightNum);
-        JSONObject object = null;
-        try {
-            object = new JSONObject("{\"on\":true}");
+            object = new JSONObject("{\"on\":" +String.valueOf(isLit) +"}");
         } catch (JSONException e) {
             e.printStackTrace();
         }

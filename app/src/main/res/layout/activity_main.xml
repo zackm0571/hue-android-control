@@ -10,6 +10,7 @@
     tools:context="com.zackmatthews.huecontrol.MainActivity">
 
     <Button
+        android:id="@+id/confirmSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Apply"
@@ -66,4 +67,12 @@
         android:layout_gravity="left|top"
         android:layout_marginTop="100dp"
         android:hint="Light timeout interval (Default 10)" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/all_lights_off"
+        android:id="@+id/manualToggle"
+        android:onClick="onClick"
+        android:layout_gravity="right|bottom" />
 </FrameLayout>

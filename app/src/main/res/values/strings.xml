@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">HueControl</string>
+    <string name="all_lights_on">All Lights On</string>
+    <string name="all_lights_off">All lights off</string>
 </resources>
