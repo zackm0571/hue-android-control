@@ -1,9 +1,11 @@
-package com.zackmatthews.huecontrol;
+package com.zackmatthews.huecontrol.sound;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.zackmatthews.huecontrol.managers.HueManager;
 
 public class SoundDetectionService extends Service {
 

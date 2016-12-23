@@ -7,7 +7,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.zackmatthews.huecontrol.MainActivity">
+    android:id="@+id/main_root_view"
+    tools:context=".controllers.MainActivity">
 
     <Button
         android:id="@+id/confirmSettings"
@@ -26,29 +27,29 @@
         android:id="@+id/dbLevel"
         android:layout_gravity="left|top" />
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1) Office"
-        android:id="@+id/checkBox"
-        android:layout_gravity="left|center_vertical"
-        android:layout_marginBottom="50dp" />
+    <!--<CheckBox-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="1) Office"-->
+        <!--android:id="@+id/checkBox"-->
+        <!--android:layout_gravity="left|center_vertical"-->
+        <!--android:layout_marginBottom="50dp" />-->
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2) Bedroom"
-        android:id="@+id/checkBox2"
-        android:layout_gravity="left|center_vertical"
-        android:layout_marginBottom="20dp" />
+    <!--<CheckBox-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="2) Bedroom"-->
+        <!--android:id="@+id/checkBox2"-->
+        <!--android:layout_gravity="left|center_vertical"-->
+        <!--android:layout_marginBottom="20dp" />-->
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3) Living room"
-        android:id="@+id/checkBox3"
-        android:layout_gravity="left|center_vertical"
-        android:layout_marginTop="10dp" />
+    <!--<CheckBox-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="3) Living room"-->
+        <!--android:id="@+id/checkBox3"-->
+        <!--android:layout_gravity="left|center_vertical"-->
+        <!--android:layout_marginTop="10dp" />-->
 
     <EditText
         android:layout_width="match_parent"

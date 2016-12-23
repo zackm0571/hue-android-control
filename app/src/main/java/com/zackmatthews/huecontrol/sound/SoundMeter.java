@@ -1,4 +1,4 @@
-package com.zackmatthews.huecontrol;
+package com.zackmatthews.huecontrol.sound;
 
 /**
  * Created by zachmathews on 11/23/16.

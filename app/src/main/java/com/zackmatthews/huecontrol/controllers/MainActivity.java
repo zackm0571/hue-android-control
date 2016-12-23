@@ -1,22 +1,34 @@
-package com.zackmatthews.huecontrol;
+package com.zackmatthews.huecontrol.controllers;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements View.OnClickListener, SoundMeter.SoundPolledListener{
+import com.zackmatthews.huecontrol.managers.HueManager;
+import com.zackmatthews.huecontrol.R;
+import com.zackmatthews.huecontrol.models.hue.HueLight;
+import com.zackmatthews.huecontrol.sound.SoundDetectionService;
+import com.zackmatthews.huecontrol.sound.SoundMeter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends Activity implements View.OnClickListener, SoundMeter.SoundPolledListener, HueManager.HueApiRequestListener{
 
     TextView currentDb;
-    CheckBox light1, light2, light3;
+    List<CheckBox> lightCheckBoxes = new ArrayList<CheckBox>();
     EditText editDecibalThreshold, editTimeout;
     Button applySettings;
     Intent soundServiceIntent;
@@ -32,6 +44,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
         else{
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
         }
+
+        HueManager.instance().startLightDiscovery(this, this);
 
         SoundMeter.instance().setListener(this);
         SoundMeter.instance().start();
@@ -83,6 +97,30 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
             stopService(soundServiceIntent);
             Toast.makeText(this, "Stopping sound service, apply settings to restart", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    protected void setupCheckBoxes(List<HueLight> lights){
+        int margin = 120;
+        int height = 30;
+        for(HueLight light : lights){
+            CheckBox checkBox = new CheckBox(this);
+
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                                                                            height,
+                                                                            Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            params.bottomMargin = margin;
+            margin -= height;
+            checkBox.setText(light.getName() + " - " + light.getType());
+            checkBox.setLayoutParams(params);
+            lightCheckBoxes.add(checkBox);
+            ViewGroup root = (ViewGroup)findViewById(R.id.main_root_view);
+            root.addView(checkBox);
+        }
+    }
+
+    @Override
+    public void onLightsDiscovered(List<HueLight> lights) {
+        setupCheckBoxes(lights);
     }
 
     @Override
