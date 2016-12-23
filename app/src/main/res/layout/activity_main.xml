@@ -21,6 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="db level : 0db"
+        android:textSize="24sp"
+        android:textStyle="bold"
         android:id="@+id/dbLevel"
         android:layout_gravity="left|top" />
 

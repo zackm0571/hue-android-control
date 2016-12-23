@@ -28,15 +28,20 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
         editDecibalThreshold = (EditText)findViewById(R.id.editDbThreshold);
         editTimeout = (EditText)findViewById(R.id.editTimeout);
         currentDb = (TextView)findViewById(R.id.dbLevel);
-        if(shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)){
-
-        }
+        if(shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)){}
         else{
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, 1);
         }
 
+        SoundMeter.instance().setListener(this);
+        SoundMeter.instance().start();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SoundMeter.instance().stop();
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -44,10 +49,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
 
         if(requestCode == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                SoundMeter.instance().setListener(this);
                 soundServiceIntent = new Intent(this, SoundDetectionService.class);
                 startService(soundServiceIntent);
-
             }
         }
     }

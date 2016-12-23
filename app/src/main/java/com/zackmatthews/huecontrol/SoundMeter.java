@@ -16,7 +16,7 @@ public class SoundMeter {
     private SoundPolledListener listener;
     private AudioRecord ar = null;
     private int minSize;
-
+    private Thread dbPollThread;
 
     public static SoundMeter instance(){
         if(instance == null){
@@ -31,12 +31,29 @@ public class SoundMeter {
         minSize= AudioRecord.getMinBufferSize(8000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
         ar = new AudioRecord(MediaRecorder.AudioSource.MIC, 8000,AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,minSize);
         ar.startRecording();
+        dbPollThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(!dbPollThread.isInterrupted()) {
+                    try {
+                        Thread.sleep(100);
+                        getAmplitude();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+        dbPollThread.start();
     }
 
     public void stop() {
         if (ar != null) {
+            dbPollThread.interrupt();
             ar.stop();
             ar.release();
+            ar = null;
         }
     }
 

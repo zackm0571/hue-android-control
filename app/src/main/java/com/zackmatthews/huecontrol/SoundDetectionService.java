@@ -14,8 +14,6 @@ public class SoundDetectionService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        SoundMeter.instance().start();
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -53,8 +51,6 @@ public class SoundDetectionService extends Service {
     public void onDestroy() {
         super.onDestroy();
         shouldContinue = false;
-        SoundMeter.instance().stop();
-
     }
 
     @Override
