@@ -58,8 +58,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.confirmSettings) {
-            HueManager.instance().dbThreshold = Double.parseDouble(editDecibalThreshold.getText().toString());
-            HueManager.instance().soundTimeout = Long.parseLong(editTimeout.getText().toString()) * 1000;
+            if(editDecibalThreshold.getText().length() > 0) {
+                HueManager.instance().dbThreshold = Double.parseDouble(editDecibalThreshold.getText().toString());
+            }
+            if(editTimeout.getText().length() > 0) {
+                HueManager.instance().soundTimeout = Long.parseLong(editTimeout.getText().toString()) * 1000;
+            }
             Toast.makeText(this, "Settings applied", Toast.LENGTH_SHORT).show();
 
             stopService(soundServiceIntent);
