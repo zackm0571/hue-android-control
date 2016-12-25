@@ -25,10 +25,11 @@ public class HueManager {
     public static final int LIGHT_COUNT = 3; //todo: discover via api request
 
     private static HueManager instance;
-
-    private String BASE_API = "http://192.168.1.151/api";
-    private String USER = "8LKcg4w717ugIGKYQKyWOkAX9bS0L254d-DPE1Ik";
-    private String BASE_LIGHT_API = "http://192.168.1.151/api/" + USER + "lights";
+    //Todo: Have user enter IP or discover via UPNP or some other protocol
+    private String BASE_API = "http://192.168.0.3/api";
+    //Todo: Create user dynamically
+    private String USER = "OWTcRdgFq7YJIpecsxLx2tBq7rKBMvXHdYSYKiGE";
+    private String BASE_LIGHT_API = BASE_API + USER + "lights";
 
     private RequestQueue queue;
 

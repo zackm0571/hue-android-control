@@ -110,7 +110,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
                                                                             Gravity.LEFT | Gravity.CENTER_VERTICAL);
             params.bottomMargin = margin;
             margin -= height;
-            checkBox.setText(light.getName() + " - " + light.getType());
+            String lightName = light.getName() + " - " + light.getType();
+            checkBox.setText(lightName);
             checkBox.setLayoutParams(params);
             lightCheckBoxes.add(checkBox);
             ViewGroup root = (ViewGroup)findViewById(R.id.main_root_view);
