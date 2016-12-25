@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -103,7 +104,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
         int margin = 120;
         int height = 80;
         for(HueLight light : lights){
-            CheckBox checkBox = new CheckBox(this);
+            final CheckBox checkBox = new CheckBox(this);
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                                                                             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -114,6 +115,18 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
             checkBox.setText(lightName);
             checkBox.setLayoutParams(params);
             checkBox.setTextSize(24);
+            checkBox.setChecked(true);
+            checkBox.setTag(light.getId());
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    int id = (int) checkBox.getTag();
+                    HueLight light = HueManager.instance().getLights().get(id-1);
+                    if(light != null){
+                        light.setIsEnabled(isChecked);
+                    }
+                }
+            });
             lightCheckBoxes.add(checkBox);
             ViewGroup root = (ViewGroup)findViewById(R.id.main_root_view);
             root.addView(checkBox);

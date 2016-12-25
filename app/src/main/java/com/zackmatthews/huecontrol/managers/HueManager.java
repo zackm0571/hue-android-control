@@ -78,6 +78,7 @@ public class HueManager {
                         light.setId(i+1);
                         light.setType(lightJson.optString("type", "unknown"));
                         light.setName(lightJson.optString("name", "unknown"));
+                        light.setIsEnabled(true);
                         mLights.add(light);
                     }
                 } catch (JSONException e) {

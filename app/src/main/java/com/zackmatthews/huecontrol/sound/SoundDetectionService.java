@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.zackmatthews.huecontrol.managers.HueManager;
+import com.zackmatthews.huecontrol.models.hue.HueLight;
 
 public class SoundDetectionService extends Service {
 
@@ -24,9 +25,11 @@ public class SoundDetectionService extends Service {
                     Log.d("Debug", String.valueOf(db) + "db");
                     boolean isLit = db > HueManager.instance().dbThreshold;
                     long sleep = (isLit) ? HueManager.instance().soundTimeout : 100;
-                    HueManager.instance().toggleLight(SoundDetectionService.this, 1, isLit);
-                    HueManager.instance().toggleLight(SoundDetectionService.this, 2, isLit);
-                    HueManager.instance().toggleLight(SoundDetectionService.this, 3, isLit);
+                    for(HueLight light : HueManager.instance().getLights()){
+                        if(light.isEnabled()) {
+                            HueManager.instance().toggleLight(SoundDetectionService.this, light.getId(), isLit);
+                        }
+                    }
                     try {
                         Thread.sleep(sleep);
                     } catch (InterruptedException e) {
