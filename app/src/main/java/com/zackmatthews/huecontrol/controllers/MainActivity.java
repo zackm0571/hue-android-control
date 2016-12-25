@@ -101,18 +101,19 @@ public class MainActivity extends Activity implements View.OnClickListener, Soun
 
     protected void setupCheckBoxes(List<HueLight> lights){
         int margin = 120;
-        int height = 30;
+        int height = 80;
         for(HueLight light : lights){
             CheckBox checkBox = new CheckBox(this);
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                                                                            height,
+                                                                            ViewGroup.LayoutParams.WRAP_CONTENT,
                                                                             Gravity.LEFT | Gravity.CENTER_VERTICAL);
             params.bottomMargin = margin;
             margin -= height;
             String lightName = light.getName() + " - " + light.getType();
             checkBox.setText(lightName);
             checkBox.setLayoutParams(params);
+            checkBox.setTextSize(24);
             lightCheckBoxes.add(checkBox);
             ViewGroup root = (ViewGroup)findViewById(R.id.main_root_view);
             root.addView(checkBox);
