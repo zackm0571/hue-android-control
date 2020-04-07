@@ -12,7 +12,8 @@ public class SoundDetectionService extends Service {
 
     public SoundDetectionService() {
     }
-
+    private double dbThreshold = 2.0;
+    private long soundTimeout = 10000;
     private boolean shouldContinue = true;
     @Override
     public void onCreate() {
@@ -23,8 +24,8 @@ public class SoundDetectionService extends Service {
                 while(shouldContinue){
                     double db = SoundMeter.instance().getAmplitude();
                     Log.d("Debug", String.valueOf(db) + "db");
-                    boolean isLit = db > HueManager.instance().dbThreshold;
-                    long sleep = (isLit) ? HueManager.instance().soundTimeout : 100;
+                    boolean isLit = db > dbThreshold;
+                    long sleep = (isLit) ? soundTimeout : 100;
                     for(HueLight light : HueManager.instance().getLights()){
                         if(light.isEnabled()) {
                             HueManager.instance().toggleLight(SoundDetectionService.this, light.getId(), isLit);

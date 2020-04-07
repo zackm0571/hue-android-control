@@ -1,6 +1,7 @@
 package com.zackmatthews.huecontrol.managers;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,32 +26,54 @@ public class HueManager {
     public static final int LIGHT_COUNT = 3; //todo: discover via api request
 
     private static HueManager instance;
+    private String ipAddress = "192.168.0.100";
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public String getBASE_API() {
+        return "http://" + getIpAddress() + "/api";
+    }
+
+
+    public String getUSER() {
+        return USER;
+    }
+
+    public void setUSER(String USER) {
+        this.USER = USER;
+    }
+
     //Todo: Have user enter IP or discover via UPNP or some other protocol
-    private String BASE_API = "http://192.168.0.3/api";
     //Todo: Create user dynamically
-    private String USER = "OWTcRdgFq7YJIpecsxLx2tBq7rKBMvXHdYSYKiGE";
-    private String BASE_LIGHT_API = BASE_API + USER + "lights";
+    private String USER = "5FpBPsKbvMOWPdiWcaigYJZCjiXKqK-Mtqd96qAQ";
+    private String BASE_LIGHT_API = getBASE_API() + "/" + USER + "/lights";
 
     private RequestQueue queue;
 
     private List<HueLight> lights = new ArrayList<>();
+
     public List<HueLight> getLights() {
         return lights;
     }
 
-    public double dbThreshold = 1000;
-    public long soundTimeout = 10000;
-
-    public interface HueApiRequestListener{
+    public interface HueApiRequestListener {
         void onLightsDiscovered(List<HueLight> lights);
     }
-    public static HueManager instance(){
-        if(instance == null) {
+
+    public static HueManager instance() {
+        if (instance == null) {
             instance = new HueManager();
         }
 
         return instance;
     }
+
     private RequestQueue getQueue(Context context) {
         if (queue == null) {
             queue = Volley.newRequestQueue(context);
@@ -59,23 +82,23 @@ public class HueManager {
         return queue;
     }
 
-    public void startLightDiscovery(final Context context, final HueApiRequestListener listener){
+    public void startLightDiscovery(final Context context, final HueApiRequestListener listener) {
         StringRequest request = new StringRequest(Request.Method.GET, BASE_LIGHT_API, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if(response == null || response.length() == 0) return;
+                if (response == null || response.length() == 0) return;
                 List<HueLight> mLights = lights;
                 mLights.clear();
 
                 try {
                     JSONObject json = new JSONObject(response);
                     json = json.getJSONObject("lights");
-                    for(int i = 0; i < json.length(); i++){
-                        int id = i+1;
+                    for (int i = 0; i < json.length(); i++) {
+                        int id = i + 1;
                         String id_key = String.valueOf(id);
                         JSONObject lightJson = json.getJSONObject(id_key);
                         HueLight light = new HueLight();
-                        light.setId(i+1);
+                        light.setId(i + 1);
                         light.setType(lightJson.optString("type", "unknown"));
                         light.setName(lightJson.optString("name", "unknown"));
                         light.setIsEnabled(true);
@@ -86,23 +109,24 @@ public class HueManager {
                 }
                 lights = mLights;
 
-                if(listener != null){
+                if (listener != null) {
                     listener.onLightsDiscovered(lights);
                 }
             }
         }, null);
         getQueue(context).add(request);
     }
-    public void toggleLight(final Context context, int lightNum, boolean isLit){
-        String LIGHT_NUM= String.valueOf(lightNum);
+
+    public void toggleLight(final Context context, int lightNum, boolean isLit) {
+        String LIGHT_NUM = String.valueOf(lightNum);
         JSONObject object = null;
         try {
-            object = new JSONObject("{\"on\":" +String.valueOf(isLit) +"}");
+            object = new JSONObject("{\"on\":" + String.valueOf(isLit) + "}");
         } catch (JSONException e) {
             e.printStackTrace();
         }
         JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.Method.PUT,
-                BASE_API + "/" + USER + "/lights/" + LIGHT_NUM + "/state", object, null, new Response.ErrorListener() {
+                getBASE_API() + "/" + USER + "/lights/" + LIGHT_NUM + "/state", object, null, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 //Toast.makeText(context, error.getMessage().toString(), Toast.LENGTH_LONG).show();
@@ -111,4 +135,45 @@ public class HueManager {
 
         getQueue(context).add(request);
     }
+
+    public void setLightHue(final Context context, int lightNum, int hue) {
+        String LIGHT_NUM = String.valueOf(lightNum);
+        JSONObject object = null;
+        try {
+            object = new JSONObject("{\"hue\":" + hue + "}");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.Method.PUT,
+                getBASE_API() + "/" + USER + "/lights/" + LIGHT_NUM + "/state", object, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        getQueue(context).add(request);
+    }
+
+
+    public void setLightXY(final Context context, int lightNum, double[] xy) {
+        String LIGHT_NUM = String.valueOf(lightNum);
+        JSONObject object = null;
+        try {
+            object = new JSONObject("{\"xy\": [" + xy[0] + "," + xy[1] + "]}");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest request = new JsonObjectRequest(JsonObjectRequest.Method.PUT,
+                getBASE_API() + "/" + USER + "/lights/" + LIGHT_NUM + "/state", object, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        getQueue(context).add(request);
+    }
+
+
 }
